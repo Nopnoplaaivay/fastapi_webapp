@@ -1,10 +1,7 @@
-import datetime
-from typing import List
-from starlette.requests import Request
-
-from data.release import Release
 from services import package_service
+from starlette.requests import Request
 from viewmodels.shared.viewmodel import ViewModelBase
+
 
 class DetailsViewModel(ViewModelBase):
     def __init__(self, package_name: str, request: Request):
@@ -20,5 +17,6 @@ class DetailsViewModel(ViewModelBase):
         if not self.package or not self.latest_release:
             return
 
-        self.latest_version = self.latest_release.version
-        self.maintainers = self.package.maintainers
+        r = self.latest_release
+        self.latest_version = f'{r.major_ver}.{r.minor_ver}.{r.build_ver}'
+        self.maintainers = []

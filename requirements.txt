@@ -1,5 +1,8 @@
 fastapi==0.115.6
 uvicorn==0.34.0
 fastapi_chameleon==0.1.16
-python-multipart
+python-multipart==0.0.20
 SQLAlchemy==1.4.54
+progressbar2==4.5.0
+python-dateutil==2.9.0.post0
+passlib==1.7.4

@@ -1,15 +1,12 @@
 import fastapi
-from fastapi.requests import Request
 from fastapi_chameleon import template
-from starlette import status
-from starlette.responses import Response
-
 from infrastructure import cookie_auth
 from services import user_service
-from viewmodels.account.accountviewmodel import AccountViewModel
-from viewmodels.account.loginviewmodel import LoginViewModel
-from viewmodels.account.registerviewmodel import RegisterViewModel
-
+from starlette import status
+from starlette.requests import Request
+from viewmodels.account.account_viewmodel import AccountViewModel
+from viewmodels.account.login_viewmodel import LoginViewModel
+from viewmodels.account.register_viewmodel import RegisterViewModel
 
 router = fastapi.APIRouter()
 
@@ -20,15 +17,14 @@ def index(request: Request):
     vm = AccountViewModel(request)
     return vm.to_dict()
 
-'''
-REGISTER
-'''
+
 @router.get('/account/register')
 @template()
 def register(request: Request):
     vm = RegisterViewModel(request)
     return vm.to_dict()
-    
+
+
 @router.post('/account/register')
 @template()
 async def register(request: Request):
@@ -38,23 +34,26 @@ async def register(request: Request):
     if vm.error:
         return vm.to_dict()
 
-    # Create the account    
+    # Create the account
     account = user_service.create_account(vm.name, vm.email, vm.password)
 
     # Login user
     response = fastapi.responses.RedirectResponse(url='/account', status_code=status.HTTP_302_FOUND)
     cookie_auth.set_auth(response, account.id)
+
     return response
 
-'''
-LOGIN
-'''
+
+# ################### LOGIN #################################
+
+
 @router.get('/account/login')
-@template()
-def login(request: Request):
+@template(template_file='account/login.pt')
+def login_get(request: Request):
     vm = LoginViewModel(request)
     return vm.to_dict()
-    
+
+
 @router.post('/account/login')
 @template(template_file='account/login.pt')
 async def login_post(request: Request):
@@ -74,12 +73,10 @@ async def login_post(request: Request):
 
     return resp
 
-'''
-LOGOUT
-'''
+
 @router.get('/account/logout')
-@template()
-def logout(response: Response):
+def logout():
     response = fastapi.responses.RedirectResponse(url='/', status_code=status.HTTP_302_FOUND)
     cookie_auth.logout(response)
+
     return response
