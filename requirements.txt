@@ -1,4 +1,5 @@
-fastapi
-uvicorn
-fastapi_chameleon
+fastapi==0.115.6
+uvicorn==0.34.0
+fastapi_chameleon==0.1.16
 python-multipart
+SQLAlchemy==1.4.54
